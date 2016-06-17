@@ -10,18 +10,20 @@ $building_locationerror = $heat_peak_loaderror = $heat_total_loaderror = $cool_p
 $building_locationmsg = $heat_peak_loadmsg = $heat_total_loadmsg = $cool_peak_loadmsg = $cool_total_loadmsg = $natgas_pricemsg = $electricity_pricemsg = '';
 $cboxerror = $heatapperror = $coolapperror = '';
 $building_location = $building_state = $heat_peak_load = $heat_total_load = $cool_peak_load = $cool_total_load = $natgas_price = $electricity_price = '';
+$selected_bldg_loc = '';
 
 // detect form field errors
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	$building_state = test_input($_POST["building_state"]);
 	$_SESSION["building_state"] = $building_state;
-	
   if (empty($_POST["building_location"])) {
 	$building_locationerror = "* ";
-	$building_locationmsg = "Please input a value.";
+	$building_locationmsg = "Please select a city/region.";
+	$selected_bldg_loc = '';
   } else {
   $building_location = test_input($_POST["building_location"]);
+  $selected_bldg_loc = "<br/>Selected building location: ".$building_location.", ".$building_state."<br/>";
   $_SESSION["building_location"] = $building_location;
   }
   
@@ -120,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if ($heat_peak_load != '' && $heat_total_load != '' && $building_location != '' && $natgas_price != '' && $electricity_price != '') {
     $_SESSION["cool_peak_load"] = '';	
 	$_SESSION["cool_total_load"] = '';
-	  header('Location: costest3hc.php');
+	  header('Location: costest3.php');
 	  exit;
 	}
   }
@@ -128,13 +130,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if ($cool_peak_load != '' && $cool_total_load != '' && $building_location != '' && $natgas_price != '' && $electricity_price != '') {
     $_SESSION["heat_peak_load"] = '';	
 	$_SESSION["heat_total_load"] = '';
-	  header('Location: costest3hc.php');
+	  header('Location: costest3.php');
 	  exit;
 	}
   }
   else if (isset($_POST['heatapp']) && isset($_POST['coolapp'])) {
 	if ($heat_peak_load != '' && $heat_total_load != '' && $cool_peak_load != '' && $cool_total_load != '' && $building_location != '' && $natgas_price != '' && $electricity_price != '') {
-	  header('Location: costest3hc.php');
+	  header('Location: costest3.php');
 	  exit;
 	}
   }
@@ -146,12 +148,63 @@ function test_input($data) {
   $data = htmlspecialchars($data);
   return $data;
 }
+
+$states = array("AK","AL","AR","AZ","CA","CO","CT","DE","FL","GA","GU","HI","IA","ID","IL",
+				"IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MS","MT","NC","ND","NE",
+				"NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX",
+				"UT","VA","VI","VT","WA","WI","WV","WY");
+for ($i=0;$i<53;$i++) {
+	$cities[$i] = explode(PHP_EOL, file_get_contents("weatherdata/".$states[$i].".txt"));
+}
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <!-- this script allows user to enable heating and/or cooling application fields -->
 <SCRIPT LANGUAGE="JavaScript">
+
+var states = <?php echo json_encode($states)?>;
+var cities = <?php echo json_encode($cities)?>;
+
+var s = '';
+function cityoptions() {
+	s = document.getElementById("building_state").value;
+	for (var i=0;i<53;i++) {
+	if(s==states[i]) {
+		var citylist = cities[i];
+		var select = document.getElementById("building_location");
+		select.options.length = 0;
+		var opt = "<option value=''>City/Region</option>";
+		select.innerHTML = select.innerHTML + opt;
+		for (j=0;j<citylist.length-1;j++) {
+			//var opt = "<option id=city"+j+" value="+citylist[j]+">"+citylist[j]+"</option>";
+			//select.innerHTML = select.innerHTML + opt;
+			var elem = document.createElement("option");
+			elem.textContent = citylist[j];
+			elem.id = "city"+j;
+			elem.value = citylist[j];
+			select.appendChild(elem);
+		}
+		i = 53;
+	}
+	}
+}
+
+function selectdetect() {
+	var bldg_loc = <?php echo json_encode($building_location) ?>;
+var cit = document.getElementById("building_location");
+for (i=0;i<cit.options.length-1;i++) {
+	if (document.getElementById('city'+i).value==bldg_loc) {
+		document.getElementById('city'+i).selected=true;
+	} else {
+		document.getElementById('city'+1).selected=true;
+	}
+}
+}
+
+
+
 function codename() {
 
 if(document.economic.heatapp.checked && document.economic.coolapp.checked==false)
@@ -217,8 +270,10 @@ document.economic.cool_total_load.disabled=true;
 }
 
 function defaults() {
-		document.getElementById('building_location').value = "Houston";
 		document.getElementById('building_state').value = "TX";
+		cityoptions();
+		document.getElementById("city"+31).selected = true;
+		var showcity = document.getElementById("city"+31).value;
 		document.getElementById('natgas_price').value = 0.4;
 		document.getElementById('electricity_price').value = 0.102;
 		if(document.economic.heatapp.checked && document.economic.coolapp.checked) {
@@ -239,7 +294,13 @@ function defaults() {
 		}
 }
 
-window.onload = codename;
+function start() {
+	cityoptions();
+	//selectdetect();
+	codename();
+}
+
+window.onload = start;
 </SCRIPT>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -275,8 +336,7 @@ Calculate
 <!-- form -->
 <form class="input" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" name="economic" id="economic">
 <span class="error"><?php echo $building_locationerror;?></span>Building location:
-<input type="text" name="building_location" id="building_location" size="10" value="<?php echo $building_location;?>">
-<select name="building_state" id="building_state">
+<select name="building_state" id="building_state" onchange="cityoptions()">
 	<option value="AL" <?php if($building_state=="AL") echo "selected='selected'";?>>Alabama</option>
 	<option value="AK" <?php if($building_state=="AK") echo "selected='selected'";?>>Alaska</option>
 	<option value="AZ" <?php if($building_state=="AZ") echo "selected='selected'";?>>Arizona</option>
@@ -285,9 +345,9 @@ Calculate
 	<option value="CO" <?php if($building_state=="CO") echo "selected='selected'";?>>Colorado</option>
 	<option value="CT" <?php if($building_state=="CT") echo "selected='selected'";?>>Connecticut</option>
 	<option value="DE" <?php if($building_state=="DE") echo "selected='selected'";?>>Delaware</option>
-	<option value="DC" <?php if($building_state=="DC") echo "selected='selected'";?>>District Of Columbia</option>
 	<option value="FL" <?php if($building_state=="FL") echo "selected='selected'";?>>Florida</option>
 	<option value="GA" <?php if($building_state=="GA") echo "selected='selected'";?>>Georgia</option>
+	<option value="GU" <?php if($building_state=="GU") echo "selected='selected'";?>>Guam</option>
 	<option value="HI" <?php if($building_state=="HI") echo "selected='selected'";?>>Hawaii</option>
 	<option value="ID" <?php if($building_state=="ID") echo "selected='selected'";?>>Idaho</option>
 	<option value="IL" <?php if($building_state=="IL") echo "selected='selected'";?>>Illinois</option>
@@ -316,6 +376,7 @@ Calculate
 	<option value="OK" <?php if($building_state=="OK") echo "selected='selected'";?>>Oklahoma</option>
 	<option value="OR" <?php if($building_state=="OR") echo "selected='selected'";?>>Oregon</option>
 	<option value="PA" <?php if($building_state=="PA") echo "selected='selected'";?>>Pennsylvania</option>
+	<option value="PR" <?php if($building_state=="PR") echo "selected='selected'";?>>Puerto Rico</option>
 	<option value="RI" <?php if($building_state=="RI") echo "selected='selected'";?>>Rhode Island</option>
 	<option value="SC" <?php if($building_state=="SC") echo "selected='selected'";?>>South Carolina</option>
 	<option value="SD" <?php if($building_state=="SD") echo "selected='selected'";?>>South Dakota</option>
@@ -324,12 +385,18 @@ Calculate
 	<option value="UT" <?php if($building_state=="UT") echo "selected='selected'";?>>Utah</option>
 	<option value="VT" <?php if($building_state=="VT") echo "selected='selected'";?>>Vermont</option>
 	<option value="VA" <?php if($building_state=="VA") echo "selected='selected'";?>>Virginia</option>
+	<option value="VI" <?php if($building_state=="VI") echo "selected='selected'";?>>Virgin Islands</option>
 	<option value="WA" <?php if($building_state=="WA") echo "selected='selected'";?>>Washington</option>
 	<option value="WV" <?php if($building_state=="WV") echo "selected='selected'";?>>West Virginia</option>
 	<option value="WI" <?php if($building_state=="WI") echo "selected='selected'";?>>Wisconsin</option>
 	<option value="WY" <?php if($building_state=="WY") echo "selected='selected'";?>>Wyoming</option>
 </select>
-<br><span class="error"><?php echo $building_locationmsg;?></span>
+
+<select name="building_location" id="building_location"></select>
+
+<!--<input type="text" name="building_location" id="building_location" size="10" value="<?php echo $building_location;?>">-->
+
+<br><span class="error"><?php echo $building_locationmsg;?></span><span><?php echo $selected_bldg_loc;?></span>
 <br>
 <div class = "parabox">
 <span class="error"><?php echo $heatapperror;?></span><label><input type="checkbox" onclick="codename()" id="cbox1" name="heatapp" value="ON" <?php if(isset($_POST['heatapp'])) echo "checked='checked'";?>>Heating application</label>
