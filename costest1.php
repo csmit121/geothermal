@@ -104,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$opcosterrormsg = "Value must be between 0 and 1,000,000.";
   } else {
   $opcost = test_input($_POST["opcost"]);
+  $_SESSION["opcost"] = $opcost;
   $opcostunits = test_input($_POST["opcostunits"]);
   $_SESSION["opcostunits"] = $opcostunits;
   }
