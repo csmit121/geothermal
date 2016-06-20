@@ -33,6 +33,8 @@ $avgvel = $_SESSION["avgvel"];
 $lifetime = $_SESSION["lifetime"];
 $discount = $_SESSION["discount"];
 
+require 'input.php';
+
 $output = explode(PHP_EOL, file_get_contents("output.txt"));
 $output = str_replace("CaseTitle","Case Title:",$output);
 $output = str_replace("Location","Location:",$output);
