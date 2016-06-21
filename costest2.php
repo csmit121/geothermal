@@ -5,79 +5,109 @@ $fluidt = $_SESSION["fluidt"];
 $siteinvest = $_SESSION["siteinvest"];
 $opcost = $_SESSION["opcost"];
 
+$varnames = array("building_location","building_state","selected_bldg_loc","heat_peak_load","heat_total_load","cool_peak_load","cool_total_load","natgas_price","electricity_price","pg2complete");
+
+for ($k=0;$k<count($varnames);$k++) {
+	if ($_SESSION[$varnames[$k]]!='') {
+		${$varnames[$k]} = $_SESSION[$varnames[$k]];
+	} else {
+	${$varnames[$k]} = '';
+	}
+}	
+
 // define variables and set to empty values
 $building_locationerror = $heat_peak_loaderror = $heat_total_loaderror = $cool_peak_loaderror = $cool_total_loaderror = $natgas_priceerror = $electricity_priceerror = '';
 $building_locationmsg = $heat_peak_loadmsg = $heat_total_loadmsg = $cool_peak_loadmsg = $cool_total_loadmsg = $natgas_pricemsg = $electricity_pricemsg = '';
 $cboxerror = $heatapperror = $coolapperror = '';
-$building_location = $building_state = $heat_peak_load = $heat_total_load = $cool_peak_load = $cool_total_load = $natgas_price = $electricity_price = '';
-$selected_bldg_loc = '';
+//$building_location = $building_state = $heat_peak_load = $heat_total_load = $cool_peak_load = $cool_total_load = $natgas_price = $electricity_price = '';
+//$selected_bldg_loc = '';
 
 // detect form field errors
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
+	$_SESSION["pg2complete"]='';
 	$building_state = test_input($_POST["building_state"]);
 	$_SESSION["building_state"] = $building_state;
-  if (empty($_POST["building_location"])) {
+  if ($_POST["building_location"]=='' && $_SESSION["building_location"]=='') {
 	$building_locationerror = "* ";
 	$building_locationmsg = "Please select a city/region.";
+	$_SESSION["building_location"] = '';
 	$selected_bldg_loc = '';
+	$_SESSION["selected_bldg_loc"] = '';
+  } else if($_POST["building_location"]=='' && $_SESSION["building_location"]!=='') {
+	$building_location = $_SESSION["building_location"];
+	$selected_bldg_loc = "<br/>Selected building location: ".$building_location.", ".$building_state."<br/>";
+    $_SESSION["selected_bldg_loc"] = $selected_bldg_loc;
   } else {
   $building_location = test_input($_POST["building_location"]);
   $selected_bldg_loc = "<br/>Selected building location: ".$building_location.", ".$building_state."<br/>";
   $_SESSION["building_location"] = $building_location;
+  $_SESSION["selected_bldg_loc"] = $selected_bldg_loc;
   }
   
-  if (empty($_POST["natgas_price"])) {
+  if ($_POST["natgas_price"]=='') {
 	$natgas_priceerror = "* ";
 	$natgas_pricemsg = "Please input a value.";
+	$_SESSION["natgas_price"] = '';
   } else if (!is_numeric($_POST["natgas_price"])) {
     $natgas_priceerror = "* ";
 	$natgas_pricemsg = "Please use numeric or decimal characters.";
+	$_SESSION["natgas_price"] = '';
   } else if (($_POST["natgas_price"]) < 0.01 || ($_POST["natgas_price"]) > 10) {
 	$natgas_priceerror = "* ";
 	$natgas_pricemsg = "Value must be between 0.01 and 10.";
+	$_SESSION["natgas_price"] = '';
   } else {
   $natgas_price = test_input($_POST["natgas_price"]);
   $_SESSION["natgas_price"] = $natgas_price;
   }
   
-  if (empty($_POST["electricity_price"])) {
+  if ($_POST["electricity_price"]=='') {
 	$electricity_priceerror = "* ";
 	$electricity_pricemsg = "Please input a value.";
+	$_SESSION["electricity_price"] = '';
   } else if (!is_numeric($_POST["electricity_price"])) {
 	$electricity_priceerror = "* ";
 	$electricity_pricemsg = "Please use numeric or decimal characters.";
+	$_SESSION["electricity_price"] = '';
   } else if (($_POST["electricity_price"]) < 0.01 || ($_POST["electricity_price"]) > 10) {
 	$electricity_priceerror = "* ";
 	$electricity_pricemsg = "Value must be between 0.01 and 10.";
+	$_SESSION["electricity_price"] = '';
   } else {
   $electricity_price = test_input($_POST["electricity_price"]);
   $_SESSION["electricity_price"] = $electricity_price;
   }
   
   if (isset($_POST['heatapp'])) {
-	if (empty($_POST["heat_peak_load"])) {
+	if ($_POST["heat_peak_load"]=='') {
 		$heat_peak_loaderror = "* ";
 		$heat_peak_loadmsg = "Please input a value.";
+		$_SESSION["heat_peak_load"] = '';
 	} else if (!is_numeric($_POST["heat_peak_load"])) {
 		$heat_peak_loaderror = "* ";
 		$heat_peak_loadmsg = "Please use numeric or decimal characters.";
+		$_SESSION["heat_peak_load"] = '';
 	} else if (($_POST["heat_peak_load"]) < 1 || ($_POST["heat_peak_load"]) > 1000000) {
 		$heat_peak_loaderror = "* ";
 		$heat_peak_loadmsg = "Value must be between 1 and 1,000,000.";
+		$_SESSION["heat_peak_load"] = '';
 	} 	else {
 	$heat_peak_load = test_input($_POST["heat_peak_load"]);
 	$_SESSION["heat_peak_load"] = $heat_peak_load;
 	}
-	if (empty($_POST["heat_total_load"])) {
+	if ($_POST["heat_total_load"]=='') {
 		$heat_total_loaderror = "* ";
 		$heat_total_loadmsg = "<br/>Please input a value.";
+		$_SESSION["heat_total_load"] = '';
 	} else if (!is_numeric($_POST["heat_total_load"])) {
 		$heat_total_loaderror = "* ";
 		$heat_total_loadmsg = "<br/>Please use numeric or decimal characters.";
+		$_SESSION["heat_total_load"] = '';
 	} else if (($_POST["heat_total_load"]) < 1 || ($_POST["heat_total_load"]) > 1000000000) {
 		$heat_total_loaderror = "* ";
 		$heat_total_loadmsg = "<br/>Value must be between 1 and 1,000,000,000.";
+		$_SESSION["heat_total_load"] = '';
 	} 	else {
 	$heat_total_load = test_input($_POST["heat_total_load"]);
 	$_SESSION["heat_total_load"] = $heat_total_load;
@@ -85,28 +115,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }	
   
   if (isset($_POST['coolapp'])) {
-	if (empty($_POST["cool_peak_load"])) {
+	if ($_POST["cool_peak_load"]=='') {
 		$cool_peak_loaderror = "* ";
 		$cool_peak_loadmsg = "Please input a value.";
+		$_SESSION["cool_peak_load"] = '';
 	} else if (!is_numeric($_POST["cool_peak_load"])) {
 		$cool_peak_loaderror = "* ";
 		$cool_peak_loadmsg = "Please use numeric or decimal characters.";
+		$_SESSION["cool_peak_load"] = '';
 	} else if (($_POST["cool_peak_load"]) < 1 || ($_POST["cool_peak_load"]) > 1000000) {
 		$cool_peak_loaderror = "* ";
 		$cool_peak_loadmsg = "Value must be between 1 and 1,000,000.";
+		$_SESSION["cool_peak_load"] = '';
 	} 	else {
 	$cool_peak_load = test_input($_POST["cool_peak_load"]);
 	$_SESSION["cool_peak_load"] = $cool_peak_load;
 	}
-	if (empty($_POST["cool_total_load"])) {
+	if ($_POST["cool_total_load"]=='') {
 		$cool_total_loaderror = "* ";
 		$cool_total_loadmsg = "<br/>Please input a value.";
+		$_SESSION["cool_total_load"] = '';
 	} else if (!is_numeric($_POST["cool_total_load"])) {
 		$cool_total_loaderror = "* ";
 		$cool_total_loadmsg = "<br/>Please use numeric or decimal characters.";
+		$_SESSION["cool_total_load"] = '';
 	} else if (($_POST["cool_total_load"]) < 1 || ($_POST["cool_total_load"]) > 1000000000) {
 		$cool_total_loaderror = "* ";
 		$cool_total_loadmsg = "<br/>Value must be between 1 and 1,000,000,000.";
+		$_SESSION["cool_total_load"] = '';
 	} 	else {
 	$cool_total_load = test_input($_POST["cool_total_load"]);
 	$_SESSION["cool_total_load"] = $cool_total_load;
@@ -117,25 +153,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$cboxerror = 'please select heating and/or cooling application';
 	$heatapperror = '* ';
 	$coolapperror = '* ';
+	$_SESSION["heat_peak_load"] = '';	
+	$_SESSION["heat_total_load"] = '';
+	$_SESSION["cool_peak_load"] = '';	
+	$_SESSION["cool_total_load"] = '';
   }
   else if (isset($_POST['heatapp']) && !isset($_POST['coolapp'])) {
-	if ($heat_peak_load != '' && $heat_total_load != '' && $building_location != '' && $natgas_price != '' && $electricity_price != '') {
+	if ($_SESSION["heat_peak_load"] != '' && $_SESSION["heat_total_load"] != '' && $_SESSION["building_location"] != '' && $_SESSION["natgas_price"] != '' && $_SESSION["electricity_price"] != '') {
     $_SESSION["cool_peak_load"] = '';	
 	$_SESSION["cool_total_load"] = '';
+	$_SESSION["pg2complete"] = "yes";
 	  header('Location: costest3.php');
 	  exit;
 	}
   }
   else if (!isset($_POST['heatapp']) && isset($_POST['coolapp'])) {
-	if ($cool_peak_load != '' && $cool_total_load != '' && $building_location != '' && $natgas_price != '' && $electricity_price != '') {
+	if ($_SESSION["cool_peak_load"] != '' && $_SESSION["cool_total_load"] != '' && $_SESSION["building_location"] != '' && $_SESSION["natgas_price"] != '' && $_SESSION["electricity_price"] != '') {
     $_SESSION["heat_peak_load"] = '';	
 	$_SESSION["heat_total_load"] = '';
+	$_SESSION["pg2complete"] = "yes";
 	  header('Location: costest3.php');
 	  exit;
 	}
   }
   else if (isset($_POST['heatapp']) && isset($_POST['coolapp'])) {
-	if ($heat_peak_load != '' && $heat_total_load != '' && $cool_peak_load != '' && $cool_total_load != '' && $building_location != '' && $natgas_price != '' && $electricity_price != '') {
+	if ($_SESSION["heat_peak_load"] != '' && $_SESSION["heat_total_load"] != '' && $_SESSION["cool_peak_load"] != '' && $_SESSION["cool_total_load"] != '' && $_SESSION["building_location"] != '' && $_SESSION["natgas_price"] != '' && $_SESSION["electricity_price"] != '') {
+	  $_SESSION["pg2complete"] = "yes";
 	  header('Location: costest3.php');
 	  exit;
 	}
@@ -191,8 +234,8 @@ function cityoptions() {
 	}
 }
 
-function selectdetect() {
-	var bldg_loc = <?php echo json_encode($building_location) ?>;
+function selectdetect() { //this function has not worked
+	var bldg_loc = <?php echo json_encode($_SESSION["building_location"]) ?>;
 var cit = document.getElementById("building_location");
 for (i=0;i<cit.options.length-1;i++) {
 	if (document.getElementById('city'+i).value==bldg_loc) {
@@ -204,6 +247,19 @@ for (i=0;i<cit.options.length-1;i++) {
 }
 
 
+
+function cboxchecker() {
+	
+var htpkld = <?php echo json_encode($_SESSION["heat_peak_load"]) ?>;
+var clpkld = <?php echo json_encode($_SESSION["cool_peak_load"]) ?>;
+	
+if(htpkld != '') {
+	document.economic.heatapp.checked=true;
+}
+if(clpkld != '') {
+	document.economic.coolapp.checked=true;
+}
+}
 
 function codename() {
 
@@ -276,26 +332,57 @@ function defaults() {
 		var showcity = document.getElementById("city"+31).value;
 		document.getElementById('natgas_price').value = 0.4;
 		document.getElementById('electricity_price').value = 0.102;
-		if(document.economic.heatapp.checked && document.economic.coolapp.checked) {
-		document.getElementById('heat_peak_load').value = 1000;
-		document.getElementById('heat_total_load').value = 10000;
-		document.getElementById('cool_peak_load').value = 3000;
-		document.getElementById('cool_total_load').value = 6767238;
-		} else if(document.economic.heatapp.checked && document.economic.coolapp.checked==false) {
-		document.getElementById('heat_peak_load').value = 1000;
-		document.getElementById('heat_total_load').value = 10000;
-		document.getElementById('cool_peak_load').value = '';
-		document.getElementById('cool_total_load').value = '';
-		} else if(document.economic.heatapp.checked==false && document.economic.coolapp.checked) {
+		//if(document.economic.heatapp.checked && document.economic.coolapp.checked) {
+		//document.getElementById('heat_peak_load').value = 1000;
+		//document.getElementById('heat_total_load').value = 10000;
+		//document.getElementById('cool_peak_load').value = 3000;
+		//document.getElementById('cool_total_load').value = 6767238;
+		//} else if(document.economic.heatapp.checked && document.economic.coolapp.checked==false) {
+		//document.getElementById('heat_peak_load').value = 1000;
+		//document.getElementById('heat_total_load').value = 10000;
+		//document.getElementById('cool_peak_load').value = '';
+		//document.getElementById('cool_total_load').value = '';
+		//} 
+		//else if(document.economic.heatapp.checked==false && document.economic.coolapp.checked) {
+		document.getElementById("cbox1").checked=false;
+		document.getElementById("cbox2").checked=true;
+		codename();
 		document.getElementById('heat_peak_load').value = '';
 		document.getElementById('heat_total_load').value = '';
 		document.getElementById('cool_peak_load').value = 3000;
 		document.getElementById('cool_total_load').value = 6767238;
-		}
+		//}
+}
+
+function sidebarlinks() {
+	var pg1 = <?php echo json_encode($_SESSION["pg1complete"]) ?>;
+	var pg2 = <?php echo json_encode($_SESSION["pg2complete"]) ?>;
+	var pg3 = <?php echo json_encode($_SESSION["pg3complete"]) ?>;
+	var pg4 = <?php echo json_encode($_SESSION["pg4complete"]) ?>;
+	var pg5 = <?php echo json_encode($_SESSION["pg5complete"]) ?>;
+	var pg6 = <?php echo json_encode($_SESSION["pg6complete"]) ?>;
+	
+	if(pg1!='') {
+		document.getElementById('pg1link').innerHTML = "<a href='costest1.php'>Geothermal Site Info</a>";
+	}
+	if(pg3!='') {
+		document.getElementById('pg3link').innerHTML = "<a href='costest3.php'>Baseline System Info</a>";
+	}
+	if(pg4!='') {
+		document.getElementById('pg4link').innerHTML = "<a href='costest4.php'>Choose Technology</a>";
+	}
+	if(pg5!='') {
+		document.getElementById('pg5link').innerHTML = "<a href='costest5.php'>Transportation Info</a>";
+	}
+	if(pg6!='') {
+		document.getElementById('pg6link').innerHTML = "<a href='costest6.php'>Project Info</a>";
+	}
 }
 
 function start() {
+	sidebarlinks();
 	cityoptions();
+	cboxchecker();
 	//selectdetect();
 	codename();
 }
@@ -318,17 +405,17 @@ window.onload = start;
 <!-- progress bar -->
 <div class="progresslabels">
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Geothermal Site Info<br /><br />
+<span id="pg1link">Geothermal Site Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn.png">
 <b>Building Site Info</b><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Baseline System Info<br /><br />
+<span id="pg3link">Baseline System Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Choose Technology<br /><br />
+<span id="pg4link">Choose Technology</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Transportation Info<br /><br />
+<span id="pg5link">Transportation Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Project Info<br /><br />
+<span id="pg6link">Project Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
 Calculate
 </div>
@@ -396,14 +483,14 @@ Calculate
 
 <!--<input type="text" name="building_location" id="building_location" size="10" value="<?php echo $building_location;?>">-->
 
-<br><span class="error"><?php echo $building_locationmsg;?></span><span><?php echo $selected_bldg_loc;?></span>
+<br><span class="error"><?php echo $building_locationmsg;?></span><span><?php echo $_SESSION["selected_bldg_loc"];?></span>
 <br>
 <div class = "parabox">
 <span class="error"><?php echo $heatapperror;?></span><label><input type="checkbox" onclick="codename()" id="cbox1" name="heatapp" value="ON" <?php if(isset($_POST['heatapp'])) echo "checked='checked'";?>>Heating application</label>
 <br>
 <br>
 	<span class="error"><?php echo $heat_peak_loaderror;?></span>Heating peak load:
-	<input type="text" name="heat_peak_load" id="heat_peak_load" size="10" value="<?php echo $heat_peak_load;?>" disabled> kW
+	<input type="text" name="heat_peak_load" id="heat_peak_load" size="10" value="<?php echo $_SESSION["heat_peak_load"];?>" disabled> kW
 	<!--<select name="htpkld_unit" disabled>
 	<option value="kW">kW</option>
 	<option value="Btuh">Btu/hr</option>
@@ -412,7 +499,7 @@ Calculate
 <br><span class="error"><?php echo $heat_peak_loadmsg;?></span>
 <br>
 	<span class="error"><?php echo $heat_total_loaderror;?></span>Annual heating total load:
-	<input type="text" name="heat_total_load" id="heat_total_load" size="10" value="<?php echo $heat_total_load;?>" disabled> kWh
+	<input type="text" name="heat_total_load" id="heat_total_load" size="10" value="<?php echo $_SESSION["heat_total_load"];?>" disabled> kWh
 	<!--<select name="httold_unit" disabled>
 	<option value="kWh">kWh</option>
 	<option value="MMBtu">MMBtu</option>
@@ -430,7 +517,7 @@ Calculate
 <br>
 <br>
 	<span class="error"><?php echo $cool_peak_loaderror;?></span>Cooling peak load:
-	<input type="text" name="cool_peak_load" id="cool_peak_load" size="10" value="<?php echo $cool_peak_load;?>" disabled> kW
+	<input type="text" name="cool_peak_load" id="cool_peak_load" size="10" value="<?php echo $_SESSION["cool_peak_load"];?>" disabled> kW
 	<!--<select name="clpkld_unit" disabled>
 	<option value="kW">kW</option>
 	<option value="Btuh">BTU/hr</option>
@@ -439,7 +526,7 @@ Calculate
 <br><span class="error"><?php echo $cool_peak_loadmsg;?></span>
 <br>
 	<span class="error"><?php echo $cool_total_loaderror;?></span>Annual cooling total load:
-	<input type="text" name="cool_total_load" id="cool_total_load" size="10" value="<?php echo $cool_total_load;?>" disabled> kWh
+	<input type="text" name="cool_total_load" id="cool_total_load" size="10" value="<?php echo $_SESSION["cool_total_load"];?>" disabled> kWh
 	<!--<select name="cltold_unit" disabled>
 	<option value="kWh">kWh</option>
 	<option value="MMBtu">MMBtu</option>
@@ -453,7 +540,7 @@ Calculate
 </div>
 <br>
 <span class="error"><?php echo $natgas_priceerror;?></span>Natural gas price: $
-<input type="text" name="natgas_price" id="natgas_price" size="10" value="<?php echo $natgas_price;?>">/MMBtu
+<input type="text" name="natgas_price" id="natgas_price" size="10" value="<?php echo $_SESSION["natgas_price"];?>">/MMBtu
 <!--<select name="unit">
 	<option value="kWh">kWh</option>
 	<option value="MMBtu">MMBtu</option>
@@ -462,7 +549,7 @@ Calculate
 <br><span class="error"><?php echo $natgas_pricemsg;?></span>
 <br>
 <span class="error"><?php echo $electricity_priceerror;?></span>Electricity price: $
-<input type="text" name="electricity_price" id="electricity_price" size="10" value="<?php echo $electricity_price;?>">/kWh
+<input type="text" name="electricity_price" id="electricity_price" size="10" value="<?php echo $_SESSION["electricity_price"];?>">/kWh
 <!--<select name="unit">
 	<option value="kWh">kWh</option>
 	<option value="MMBtu">MMBtu</option>
@@ -473,7 +560,7 @@ Calculate
   <button type="button" onclick="defaults()">Use Default Values</button>
   <br />
   <br />
-<input type="button" value="Previous" onclick="history.go(-1);return true;">
+<input type="button" value="Previous" onclick="location.href='costest1.php'">
 <input type="submit" value="Next"> <span class="error"><?php echo $cboxerror;?></span>
 
 </form>

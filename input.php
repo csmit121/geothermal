@@ -117,7 +117,7 @@ fwrite($infile, $inputtext);
 }
 $inputtext = "\r\nMaterialPrice\t"."3.55"; //override variable entry until complete
 fwrite($infile, $inputtext);
-$inputtext = "\r\nLifetime\t".$lifetime;
+$inputtext = "\r\nLifeTime\t".$lifetime;
 fwrite($infile, $inputtext);
 $inputtext = "\r\nDiscountRate ".$discount;
 fwrite($infile, $inputtext);

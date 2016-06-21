@@ -3,6 +3,7 @@ session_start();
 
 // pass variables from previous page
 $fluidt = $_SESSION["fluidt"];
+$wetbulbt = $_SESSION["wetbulbt"];
 $siteinvest = $_SESSION["siteinvest"];
 $opcost = $_SESSION["opcost"];
 $building_location = $_SESSION["building_location"];
@@ -30,22 +31,36 @@ $fueleff = $_SESSION["fueleff"];
 $loadtime = $_SESSION["loadtime"];
 $avgvel = $_SESSION["avgvel"];
 
+$varnames = array("lifetime","discount","pg6complete");
+
+for ($k=0;$k<count($varnames);$k++) {
+	if ($_SESSION[$varnames[$k]]!='') {
+		${$varnames[$k]} = $_SESSION[$varnames[$k]];
+	} else {
+	${$varnames[$k]} = '';
+	}
+}
+
 // define variables and set to empty values
-$lifetime = $discount = '';
+//$lifetime = $discount = '';
 $lifetimeerror = $discounterror = '';
 $lifetimemsg = $discountmsg = '';
 
 // detect form field errors
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	$_SESSION["pg6complete"]='';
   if (empty($_POST["lifetime"])) {
 	  $lifetimeerror = "* ";
 	$lifetimemsg = 'Please enter a value.';
+	$_SESSION["lifetime"] = '';
   } else if (!is_numeric($_POST['lifetime'])) {
 	$lifetimeerror = "* ";
 	$lifetimemsg = "Please use numeric or decimal characters.";
+	$_SESSION["lifetime"] = '';
   } else if (($_POST["lifetime"]) < 0 || ($_POST["lifetime"]) > 100) {
 	$lifetimeerror = "* ";
 	$lifetimemsg = "Value must be between 0 and 100.";
+	$_SESSION["lifetime"] = '';
   } else { 
   $lifetime = test_input($_POST['lifetime']);
   $_SESSION["lifetime"] = $lifetime;
@@ -54,18 +69,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (empty($_POST["discount"])) {
 	  $discounterror = "* ";
 	$discountmsg = 'Please enter a value.';
+	$_SESSION["discount"] = '';
   } else if (!is_numeric($_POST['discount'])) {
 	$discounterror = "* ";
 	$discountmsg = "Please use numeric or decimal characters.";
+	$_SESSION["discount"] = '';
   } else if (($_POST["discount"]) < 0 || ($_POST["discount"]) > 100) {
 	$discounterror = "* ";
 	$discountmsg = "Value must be between 0 and 100.";
+	$_SESSION["discount"] = '';
   } else { 
   $discount = test_input($_POST['discount']);
   $_SESSION["discount"] = $discount;
   }
   
-  if ($lifetime !='' && $discount !='') {
+  if ($_SESSION["lifetime"] !='' && $_SESSION["discount"] !='') {
+	  $_SESSION["pg6complete"] = "yes";
 	  header('Location: results.php');
 	  exit;
   }
@@ -85,6 +104,33 @@ function defaults() {
 	document.getElementById('lifetime').value=20;
 	document.getElementById('discount').value=3;
 }
+
+function sidebarlinks() {
+	var pg1 = <?php echo json_encode($_SESSION["pg1complete"]) ?>;
+	var pg2 = <?php echo json_encode($_SESSION["pg2complete"]) ?>;
+	var pg3 = <?php echo json_encode($_SESSION["pg3complete"]) ?>;
+	var pg4 = <?php echo json_encode($_SESSION["pg4complete"]) ?>;
+	var pg5 = <?php echo json_encode($_SESSION["pg5complete"]) ?>;
+	var pg6 = <?php echo json_encode($_SESSION["pg6complete"]) ?>;
+	
+	if(pg1!='') {
+		document.getElementById('pg1link').innerHTML = "<a href='costest1.php'>Geothermal Site Info</a>";
+	}
+	if(pg2!='') {
+		document.getElementById('pg2link').innerHTML = "<a href='costest2.php'>Building Site Info</a>";
+	}
+	if(pg3!='') {
+		document.getElementById('pg3link').innerHTML = "<a href='costest3.php'>Baseline System Info</a>";
+	}
+	if(pg4!='') {
+		document.getElementById('pg4link').innerHTML = "<a href='costest4.php'>Choose Technology</a>";
+	}
+	if(pg5!='') {
+		document.getElementById('pg5link').innerHTML = "<a href='costest5.php'>Transportation Info</a>";
+	}
+}
+
+window.onload = sidebarlinks;
 </script> 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -101,15 +147,15 @@ function defaults() {
 </div>
 <div class="progresslabels">
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Geothermal Site Info<br /><br />
+<span id="pg1link">Geothermal Site Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Building Site Info<br /><br />
+<span id="pg2link">Building Site Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Baseline System Info<br /><br />
+<span id="pg3link">Baseline System Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Choose Technology<br /><br />
+<span id="pg4link">Choose Technology</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Transportation Info<br /><br />
+<span id="pg5link">Transportation Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn.png">
 <b>Project Info</b><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
@@ -119,7 +165,7 @@ Calculate
 
 <form class = "input" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" name="projectinfo">
 
-<span class="error"><?php echo $lifetimeerror;?></span>Lifetime: <input type="text" name="lifetime" id="lifetime" size="10" value="<?php echo $lifetime;?>"> years
+<span class="error"><?php echo $lifetimeerror;?></span>Lifetime: <input type="text" name="lifetime" id="lifetime" size="10" value="<?php echo $_SESSION["lifetime"];?>"> years
 <!--<select name="unit" id="unit">
 	<option value="unit1">Unit 1</option>
 	<option value="unit2">Unit 2</option>
@@ -127,13 +173,13 @@ Calculate
 	</select>-->
 <br /><span class="error"><?php echo $lifetimemsg;?></span>
 <br />
-<span class="error"><?php echo $discounterror;?></span>Discount Rate: <input type="text" name="discount" id="discount" size="10" value="<?php echo $discount;?>">%
+<span class="error"><?php echo $discounterror;?></span>Discount Rate: <input type="text" name="discount" id="discount" size="10" value="<?php echo $_SESSION["discount"];?>">%
 <br /><span class="error"><?php echo $discountmsg;?></span>
 <br />
 <button type="button" onclick="defaults()">Use Default Values</button>
 <br/>
 <br/>
-<input type="button" value="Previous" onclick="history.go(-1);return true;">
+<input type="button" value="Previous" onclick="location.href='costest5.php'">
 <input type="submit" value="Calculate">
 
 </form>

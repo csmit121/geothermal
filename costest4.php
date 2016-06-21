@@ -20,68 +20,80 @@ $heat_rej_ec = $_SESSION["heat_rej_ec"];
 $pump_pwr_ratio = $_SESSION["pump_pwr_ratio"];
 $pump_elec_con = $_SESSION["pump_elec_con"];
 
-$DUHselect = $DUCselect = $ADSselect = $TSGAselect = $CTSGAselect = $ICEselect = $SSLCselect = $techselecterror = $boxerror = "";
+
+$varnames = array("DUHselect","DUCselect","ADSselect","TSGAselect","CTSGAselect","ICEselect","SSLCselect","pg4complete");
+
+for ($k=0;$k<count($varnames);$k++) {
+	if ($_SESSION[$varnames[$k]]!='') {
+		${$varnames[$k]} = $_SESSION[$varnames[$k]];
+	} else {
+	${$varnames[$k]} = '';
+	}
+}
+
+$techselecterror = $boxerror = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	$_SESSION["pg4complete"]='';
   if (isset($_POST['DUHbox'])) {
-  	$DUHselect = "yes";
+  	$DUHselect = "DUH";
   }
   else {
-	$DUHselect = "";
+	$DUHselect = '';
 	}
   $_SESSION["DUHselect"] = $DUHselect;
 
 
   if (isset($_POST['DUCbox'])) {
-  	$DUCselect = "yes";
+  	$DUCselect = "DUC";
   }
   else {
-	$DUCselect = "";
+	$DUCselect = '';
 	}
   $_SESSION["DUCselect"] = $DUCselect;
 
  
   if (isset($_POST['ADSbox'])) {
-  	$ADSselect = "yes";
+  	$ADSselect = "ADS";
   }
   else {
-	$ADSselect = "";
+	$ADSselect = '';
 	}
   $_SESSION["ADSselect"] = $ADSselect;
 
   
   if (isset($_POST['TSGAbox'])) {
-  	$TSGAselect = "yes";
+  	$TSGAselect = "TSGA";
   }
   else {
-	$TSGAselect = "";
+	$TSGAselect = '';
 	}
   $_SESSION["TSGAselect"] = $TSGAselect;
 
   
   if (isset($_POST['CTSGAbox'])) {
-  	$CTSGAselect = "yes";
+  	$CTSGAselect = "CTSGA";
   }
   else {
-	$CTSGAselect = "";
+	$CTSGAselect = '';
 	}
   $_SESSION["CTSGAselect"] = $CTSGAselect;
 
   
   if (isset($_POST['ICEbox'])) {
-  	$ICEselect = "yes";
+  	$ICEselect = "ICE";
   }
   else {
-	$ICEselect = "";
+	$ICEselect = '';
 	}
   $_SESSION["ICEselect"] = $ICEselect;
 
   
   if (isset($_POST['SSLCbox'])) {
-  	$SSLCselect = "yes";
+  	$SSLCselect = "SSLC";
   }
   else {
-	$SSLCselect = "";
+	$SSLCselect = '';
 	}
   $_SESSION["SSLCselect"] = $SSLCselect;
   
@@ -91,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   else if(isset($_POST['DUHbox']) || isset($_POST['DUCbox']) || isset($_POST['ADSbox']) || isset($_POST['TSGAbox']) || isset($_POST['CTSGAbox']) || isset($_POST['ICEbox']) || isset($_POST['SSLCbox']))
   {
+	$_SESSION["pg4complete"] = "yes";
 	header('Location: costest5.php');
 	exit;
   }
@@ -211,6 +224,41 @@ function hidetabs() {
 			document.getElementById('ICElist').hidden=true;
 		}
 	}
+	
+	
+}
+
+function cboxchecker() {
+	
+var duh = <?php echo json_encode($_SESSION["DUHselect"]) ?>;
+var duc = <?php echo json_encode($_SESSION["DUCselect"]) ?>;
+var ads = <?php echo json_encode($_SESSION["ADSselect"]) ?>;
+var tsga = <?php echo json_encode($_SESSION["TSGAselect"]) ?>;
+var ctsga = <?php echo json_encode($_SESSION["CTSGAselect"]) ?>;
+var ice = <?php echo json_encode($_SESSION["ICEselect"]) ?>;
+var sslc = <?php echo json_encode($_SESSION["SSLCselect"]) ?>;
+	
+if(duh != '') {
+	document.getElementById('DUHbox').checked=true;
+}
+if(duc != '') {
+	document.getElementById('DUCbox').checked=true;
+}
+if(ads != '') {
+	document.getElementById('ADSbox').checked=true;
+}
+if(tsga != '') {
+	document.getElementById('TSGAbox').checked=true;
+}
+if(ctsga != '') {
+	document.getElementById('CTSGAbox').checked=true;
+}
+if(ice != '') {
+	document.getElementById('ICEbox').checked=true;
+}
+if(sslc != '') {
+	document.getElementById('SSLCbox').checked=true;
+}
 }
 
 function openCity(evt, cityName) {
@@ -227,7 +275,38 @@ function openCity(evt, cityName) {
     evt.currentTarget.className += " active";
 }
 
-window.onload = hidetabs;
+function sidebarlinks() {
+	var pg1 = <?php echo json_encode($_SESSION["pg1complete"]) ?>;
+	var pg2 = <?php echo json_encode($_SESSION["pg2complete"]) ?>;
+	var pg3 = <?php echo json_encode($_SESSION["pg3complete"]) ?>;
+	var pg4 = <?php echo json_encode($_SESSION["pg4complete"]) ?>;
+	var pg5 = <?php echo json_encode($_SESSION["pg5complete"]) ?>;
+	var pg6 = <?php echo json_encode($_SESSION["pg6complete"]) ?>;
+	
+	if(pg1!='') {
+		document.getElementById('pg1link').innerHTML = "<a href='costest1.php'>Geothermal Site Info</a>";
+	}
+	if(pg2!='') {
+		document.getElementById('pg2link').innerHTML = "<a href='costest2.php'>Building Site Info</a>";
+	}
+	if(pg3!='') {
+		document.getElementById('pg3link').innerHTML = "<a href='costest3.php'>Baseline System Info</a>";
+	}
+	if(pg5!='') {
+		document.getElementById('pg5link').innerHTML = "<a href='costest5.php'>Transportation Info</a>";
+	}
+	if(pg6!='') {
+		document.getElementById('pg6link').innerHTML = "<a href='costest6.php'>Project Info</a>";
+	}
+}
+
+function start() {
+	sidebarlinks();
+	hidetabs();
+	cboxchecker();
+}
+
+window.onload = start;
 </script>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -244,17 +323,17 @@ window.onload = hidetabs;
 </div>
 <div class="progresslabels">
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Geothermal Site Info<br /><br />
+<span id="pg1link">Geothermal Site Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Building Site Info<br /><br />
+<span id="pg2link">Building Site Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Baseline System Info<br /><br />
+<span id="pg3link">Baseline System Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn.png">
 <b>Choose Technology</b><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Transportation Info<br /><br />
+<span id="pg5link">Transportation Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Project Info<br /><br />
+<span id="pg6link">Project Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
 Calculate
 </div>
@@ -290,7 +369,7 @@ Calculate
 
 <div id="TSGA" class="tabcontent">
   <h3>Closed Loop Absorption</h3>
-  <p>Use geothermal heat to regenerate solid desiccant for closed loop applications.</p>
+  <p>Use geothermal heat to regenerate liquid desiccant for closed loop applications.</p>
 </div>
 
 <div id="CTSGA" class="tabcontent">
@@ -319,7 +398,7 @@ Calculate
 </div>
 <br />
 <br />
-<input type="button" value="Previous" onclick="history.go(-1);return true;">
+<input type="button" value="Previous" onclick="location.href='costest3.php'">
 <input type="submit" value="Next"> <span class="error"><?php echo $techselecterror;?></span>
 </form>
 
