@@ -22,7 +22,7 @@ $pump_elec_con = $_SESSION["pump_elec_con"];
 
 //define variables and set to empty values
 
-$varnames = array("transportation","distance","distunit","netloadwl","wlunit","transportinitcost","transportopcost","fueltype","fueleff","loadtime","avgvel","pg5complete");
+$varnames = array("transportation","distance","distunit","weightlimit","netloadwl","wlunit","transportinitcost","transportopcost","fueltype","fueleff","loadtime","avgvel","pg5complete");
 
 for ($k=0;$k<count($varnames);$k++) {
 	if ($_SESSION[$varnames[$k]]!='') {
@@ -32,14 +32,17 @@ for ($k=0;$k<count($varnames);$k++) {
 	}
 }
 
+$_SESSION["pg5complete"] = "yes";
+
 //$transportation = $distance = $distunit = $netloadwl = $wlunit = $transportinitcost = $transportopcost = $fueltype = $fueleff = $loadtime = $avgvel = '';
-$transportationerror = $distanceerror = $netloadwlerror = $transportinitcosterror = $transportopcosterror = $fuelefferror = $loadtimeerror = $avgvelerror = '';
-$transportationmsg = $distancemsg = $netloadwlmsg = $transportinitcostmsg = $transportopcostmsg = $fueleffmsg = $loadtimemsg = $avgvelmsg = '';
+$transportationerror = $distanceerror = $weightlimiterror = $netloadwlerror = $transportinitcosterror = $transportopcosterror = $fuelefferror = $loadtimeerror = $avgvelerror = '';
+$transportationmsg = $distancemsg = $weightlimitmsg = $netloadwlmsg = $transportinitcostmsg = $transportopcostmsg = $fueleffmsg = $loadtimemsg = $avgvelmsg = '';
 
 // detect form field errors
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$_SESSION["pg5complete"]='';
-if ($_POST["transportation"]=='') {
+//if ($_POST["transportation"]=='') {
+	if(!isset($_POST["transportation"])) {
+	$transportation = '';
   $transportationerror = "*";
   $transportationmsg = "Please choose a transportation type.";
   $_SESSION["transportation"] = '';
@@ -72,6 +75,17 @@ if ($_POST["transportation"]=='') {
   $_SESSION["distunit"] = $distunit;
   }
 
+  if (!isset($_POST["weightlimit"])) {
+  $weightlimiterror = "*";
+  $weightlimitmsg = "Please choose an option.";
+  $_SESSION["weightlimit"] = '';
+  } else if(isset($_POST["weightlimit"])) { 
+  $weightlimit = test_input($_POST["weightlimit"]);
+  $_SESSION["weightlimit"] = $weightlimit;
+  if ($_POST["weightlimit"]!="custom") {
+	  $netloadwl = '';
+	  $_SESSION["netloadwl"] = $netloadwl;
+  } else if ($_POST["weightlimit"]=="custom") {
   if (($_POST['netloadwl'])=='') {
   $netloadwlerror = '* ';
   $netloadwlmsg = 'Please enter a value.';
@@ -89,6 +103,8 @@ if ($_POST["transportation"]=='') {
   $wlunit = test_input($_POST['wlunit']);
   $_SESSION["netloadwl"] = $netloadwl;
   $_SESSION["wlunit"] = $wlunit;
+  }
+  }
   }
   
   if (($_POST['transportinitcost'])=='') {
@@ -176,10 +192,15 @@ if ($_POST["transportation"]=='') {
   $_SESSION["avgvel"] = $avgvel;
   }
   
-  if ($_SESSION["transportation"] !='' && $_SESSION["distance"] !='' && $_SESSION["netloadwl"] !='' && $_SESSION["transportinitcost"] !='' && $_SESSION["transportopcost"] !='' && $_SESSION["fueltype"] !='' && $_SESSION["loadtime"] !='' && $_SESSION["avgvel"] != '') {
+  if ($_SESSION["transportation"] !='' && $_SESSION["distance"] !='' && $_SESSION["weightlimit"] !='' && $_SESSION["transportinitcost"] !='' && $_SESSION["transportopcost"] !='' && $_SESSION["fueltype"] !='' && $_SESSION["loadtime"] !='' && $_SESSION["avgvel"] != '') {
+	  if ($_SESSION["weightlimit"]=="custom" && $_SESSION["netloadwl"] !='') {
 	  $_SESSION["pg5complete"] = "yes";
 	  header('Location: costest6.php');
 	  exit;
+	  } else if($_SESSION["weightlimit"]!="custom") {
+	  header('Location: costest6.php');
+	  exit; 
+	  }
   }
   }
   
@@ -187,6 +208,7 @@ if ($_POST["transportation"]=='') {
 	  if($transportation !='') {
 		$_SESSION["distance"] = $distance;
 		$_SESSION["distunit"] = $distunit;
+		$_SESSION["weightlimit"] = $weightlimit;
 		$_SESSION["netloadwl"] = $netloadwl;
 		$_SESSION["wlunit"] = $wlunit;
 		$_SESSION["transportinitcost"] = $transportinitcost;
@@ -195,7 +217,6 @@ if ($_POST["transportation"]=='') {
 		$_SESSION["loadtime"] = $loadtime;
 		$_SESSION["avgvel"] = $avgvel;
 		$_SESSION["fueltype"] = $fueltype;
-		$_SESSION["pg5complete"] = "yes";
 		header('Location: costest6.php');
 		exit;
 	  }
@@ -216,6 +237,7 @@ function hidefields() {
 	document.getElementById('truckfields').hidden=true;
 	document.getElementById('distance').value='';
 	document.getElementById('distunit').value='';
+	document.transport.weightlimit.value='';
 	document.getElementById('netloadwl').value='';
 	document.getElementById('wlunit').value='';
 	document.getElementById('transportinitcost').value='';
@@ -235,6 +257,7 @@ function defaults() {
 	document.getElementById('TractorTrailer').checked=true;
 	document.getElementById('distance').value = 10;
 	document.getElementById('distunit').value = "mi";
+	document.getElementById('custom').checked = true;
 	document.getElementById('netloadwl').value = 27215;
 	document.getElementById('wlunit').value = "kg";
 	document.getElementById('transportinitcost').value = 0;
@@ -249,9 +272,19 @@ function defaults() {
 function cboxchecker() {
 	
 var transport = <?php echo json_encode($_SESSION["transportation"]) ?>;
+var weightlimit = <?php echo json_encode($_SESSION["weightlimit"]) ?>;
 
 if(transport == "TractorTrailer") {
 	document.getElementById('TractorTrailer').checked=true;
+	if(weightlimit == "60klbmtrailer") {
+		document.getElementById('60klbmtrailer').checked=true;
+	}
+	if(weightlimit == "60klbmtanker") {
+		document.getElementById('60klbmtanker').checked=true;
+	}
+	if(weightlimit == "custom") {
+		document.getElementById('custom').checked=true;
+	}
 }
 if(transport == "pipeline") {
 	document.getElementById('pipeline').checked=true;
@@ -322,15 +355,18 @@ window.onload = start;
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
 <span id="pg6link">Project Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Calculate
+Results
 </div>
 
 
 <form class = "input" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" name="transport">
+<div class="parabox">
+Transportation type: <br/>
 <span class = "error"><?php echo $transportationerror;?></span><input type="radio" name="transportation" onclick="hidefields()" value="TractorTrailer" id="TractorTrailer" <?php if (isset($_POST['transportation']) && $_POST['transportation'] == 'TractorTrailer') echo 'checked = "checked"';?>> truck 
 <span class = "error"><?php echo $transportationerror;?></span><input type="radio" name="transportation" onclick="hidefields()" value="pipeline" id="pipeline" <?php if (isset($_POST['transportation']) && $_POST['transportation'] == 'pipeline') echo 'checked = "checked"';?>> pipeline 
 <span class = "error"><?php echo $transportationerror;?></span><input type="radio" name="transportation" onclick="hidefields()" value="railway" id="railway" <?php if (isset($_POST['transportation']) && $_POST['transportation'] == 'railway') echo 'checked = "checked"';?>> railway
 <br /><span class = "error"><?php echo $transportationmsg;?></span>
+</div>
 <div id="truckfields" hidden><br />
 <span class = "error"><?php echo $distanceerror;?></span>Distance: <input type="text" name="distance" id="distance" size="10" value="<?php echo $_SESSION["distance"];?>">
 <select name="distunit" id="distunit">
@@ -339,12 +375,18 @@ Calculate
 	</select>
 <br /><span class = "error"><?php echo $distancemsg;?></span>
 <br />
-<span class = "error"><?php echo $netloadwlerror;?></span>Net Load Weight Limit: <input type="text" name="netloadwl" id="netloadwl" size="10" value="<?php echo $_SESSION["netloadwl"];?>">
+<div class="parabox">
+<span class = "error"><?php echo $weightlimiterror;?></span>
+Net Load Weight Limit: <br/>
+<input type="radio" name="weightlimit" value="60klbmtrailer" id="60klbmtrailer" <?php if(isset($_POST["weightlimit"]) && $_POST["weightlimit"]=="60klbmtrailer") echo "selected='selected'";?>> 60 klbm Trailer
+<input type="radio" name="weightlimit" value="60klbmtanker" id="60klbmtanker" <?php if(isset($_POST["weightlimit"]) && $_POST["weightlimit"]=="60klbmtanker") echo "selected='selected'";?>> 60 klbm Tanker
+<span class = "error"><?php echo $netloadwlerror;?></span><input type="radio" name="weightlimit" value="custom" id="custom" <?php if(isset($_POST["weightlimit"]) && $_POST["weightlimit"]=="custom") echo "selected='selected'";?>> Custom
+<input type="text" name="netloadwl" id="netloadwl" size="10" value="<?php echo $_SESSION["netloadwl"];?>">
 <select name="wlunit" id="wlunit">
 	<option value="lbm" <?php if($wlunit=="lbm") echo "selected='selected'";?>>lbm</option>
 	<option value="kg" <?php if($wlunit=="kg") echo "selected='selected'";?>>kg</option>
 	</select>
-<br /><span class = "error"><?php echo $netloadwlmsg;?></span>
+<br /><span class = "error"><span class = "error"><?php echo $weightlimitmsg;?></span><?php echo $netloadwlmsg;?></span></div>
 <br />
 <span class = "error"><?php echo $transportinitcosterror;?></span>Initial Cost: $<input type="text" name="transportinitcost" id="transportinitcost" size="10" value="<?php echo $_SESSION["transportinitcost"];?>">
 <br /><span class = "error"><?php echo $transportinitcostmsg;?></span>
@@ -383,8 +425,8 @@ Fuel Type: <select name="fueltype" id="fueltype">
 <button type="button" onclick="defaults()">Use Default Values</button>
 <br/>
 <br/>
-<input type="button" value="Previous" onclick="location.href='costest4.php'">
-<input type="submit" value="Next">
+<input type="button" value="Start Over" onclick="location.href='begin.php'"><input type="button" value="Previous" onclick="location.href='costest4.php'">
+<input type="submit" value="Save and Continue">
 
 </form>
 </body>

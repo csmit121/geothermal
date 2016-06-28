@@ -1,0 +1,169 @@
+.input {
+	margin: 3px;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #333;
+	background-color: #CCC;
+	padding: 0.25in;
+	border: 3px solid #333;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.results {
+	margin: 3px;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+
+	color: #333;
+	background-color: #CCC;
+	padding: 0.25in;
+	border: 3px solid #333;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.invisiblebox {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.graphs {
+	margin-left: 0.25in;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.chart {
+	margin-bottom: 6px;
+}
+
+.printable {
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #000;
+	background-color: #FFF;
+}
+
+.parabox {
+	background: #DCDCDC;
+    margin: 3px;
+    padding: 10px;
+	border: 3px solid #F8F8FF;
+}
+
+.listbold {
+	font-style: bold;
+	font-weight: bold;
+	font-size: 14px;
+	color: #333;
+}
+
+.resultlist {
+	background: #F8F8FF;
+    margin: 0;
+    padding: 3px;
+}
+.resultlist:nth-child(odd) {
+	background: #DCDCDC;
+    margin: 0;
+    padding: 3px;
+}
+
+.error {
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color:#F00;
+}
+
+.tech {
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #333;
+	background-color: #CCC;
+	padding: 0.25in;
+	border: 3px solid #333;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.headerbar {
+	background-image: url("images/ornl-logo249x60.png");
+	background-repeat: no-repeat;
+	height: 75px;
+	border-bottom: 3px solid #333;
+}
+
+
+.progresslabels {
+	font-family: Tahoma, Geneva, sans-serif;
+	color: #333;
+	font-size: 11px;
+	width: 120px;
+	padding: 0.125in;
+	padding-left: 0.3in;
+	display: inline-block;
+	background-color: #F8F8FF;
+	background-image: url("bgbar.png");
+	background-position: 5px;
+	background-repeat: repeat-y;
+	vertical-align: top;
+	border: 3px solid #333;
+	margin: 3px;
+}
+
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+	background-color: #F8F8FF;
+}
+
+
+
+

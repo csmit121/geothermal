@@ -19,6 +19,7 @@ $heat_rej_pr = $_SESSION["heat_rej_pr"];
 $heat_rej_ec = $_SESSION["heat_rej_ec"];
 $pump_pwr_ratio = $_SESSION["pump_pwr_ratio"];
 $pump_elec_con = $_SESSION["pump_elec_con"];
+$techtypeerror = $_SESSION["techtypeerror"];
 
 
 $varnames = array("DUHselect","DUCselect","ADSselect","TSGAselect","CTSGAselect","ICEselect","SSLCselect","pg4complete");
@@ -31,14 +32,106 @@ for ($k=0;$k<count($varnames);$k++) {
 	}
 }
 
+$_SESSION["pg4complete"] = "yes";
+
 $techselecterror = $boxerror = "";
 
+if($fluidt>100 && $fluidt<=150) {
+	if($cool_peak_load != '' && $heat_peak_load != '') {
+		$DUHselect = '';
+		$_SESSION["DUHselect"] = $DUHselect;
+		$DUCselect = '';
+		$_SESSION["DUCselect"] = $DUCselect;
+		$TSGAselect = '';
+		$_SESSION["TSGAselect"] = $TSGAselect;
+		$CTSGAselect = '';
+		$_SESSION["CTSGAselect"] = $CTSGAselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+		$SSLCselect = '';
+		$_SESSION["SSLCselect"] = $SSLCselect;
+	} else if($heat_peak_load != '' && $cool_peak_load == '') {
+		$DUCselect = '';
+		$_SESSION["DUCselect"] = $DUCselect;
+		$TSGAselect = '';
+		$_SESSION["TSGAselect"] = $TSGAselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+		$SSLCselect = '';
+		$_SESSION["SSLCselect"] = $SSLCselect;
+	} else if($heat_peak_load == '' && $cool_peak_load != '') {
+		$DUHselect = '';
+		$_SESSION["DUHselect"] = $DUHselect;
+	}
+} else if($fluidt>85 && $fluidt<=100) {
+	if($cool_peak_load != '' && $heat_peak_load != '') {
+		$DUHselect = '';
+		$_SESSION["DUHselect"] = $DUHselect;
+		$DUCselect = '';
+		$_SESSION["DUCselect"] = $DUCselect;
+		$TSGAselect = '';
+		$_SESSION["TSGAselect"] = $TSGAselect;
+		$CTSGAselect = '';
+		$_SESSION["CTSGAselect"] = $CTSGAselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+		$SSLCselect = '';
+		$_SESSION["SSLCselect"] = $SSLCselect;
+	} else if($heat_peak_load != '' && $cool_peak_load == '') {
+		$DUCselect = '';
+		$_SESSION["DUCselect"] = $DUCselect;
+		$TSGAselect = '';
+		$_SESSION["TSGAselect"] = $TSGAselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+		$SSLCselect = '';
+		$_SESSION["SSLCselect"] = $SSLCselect;
+	} else if($heat_peak_load == '' && $cool_peak_load != '') {
+		$DUHselect = '';
+		$_SESSION["DUHselect"] = $DUHselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+	}
+} else if($fluidt>=60 && $fluidt<=85) {
+	if($cool_peak_load != '' && $heat_peak_load != '') {
+		$DUHselect = '';
+		$_SESSION["DUHselect"] = $DUHselect;
+		$DUCselect = '';
+		$_SESSION["DUCselect"] = $DUCselect;
+		$TSGAselect = '';
+		$_SESSION["TSGAselect"] = $TSGAselect;
+		$CTSGAselect = '';
+		$_SESSION["CTSGAselect"] = $CTSGAselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+		$SSLCselect = '';
+		$_SESSION["SSLCselect"] = $SSLCselect;
+	} else if($heat_peak_load != '' && $cool_peak_load == '') {
+		$DUCselect = '';
+		$_SESSION["DUCselect"] = $DUCselect;
+		$TSGAselect = '';
+		$_SESSION["TSGAselect"] = $TSGAselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+		$SSLCselect = '';
+		$_SESSION["SSLCselect"] = $SSLCselect;
+	} else if($heat_peak_load == '' && $cool_peak_load != '') {
+		$DUCselect = '';
+		$_SESSION["DUCselect"] = $DUCselect;
+		$DUHselect = '';
+		$_SESSION["DUHselect"] = $DUHselect;
+		$TSGAselect = '';
+		$_SESSION["TSGAselect"] = $TSGAselect;
+		$ICEselect = '';
+		$_SESSION["ICEselect"] = $ICEselect;
+	}
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$_SESSION["pg4complete"]='';
   if (isset($_POST['DUHbox'])) {
   	$DUHselect = "DUH";
   }
-  else {
+  else if(!isset($_POST['DUHbox'])) {
 	$DUHselect = '';
 	}
   $_SESSION["DUHselect"] = $DUHselect;
@@ -47,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['DUCbox'])) {
   	$DUCselect = "DUC";
   }
-  else {
+  else if(!isset($_POST['DUCbox'])) {
 	$DUCselect = '';
 	}
   $_SESSION["DUCselect"] = $DUCselect;
@@ -56,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['ADSbox'])) {
   	$ADSselect = "ADS";
   }
-  else {
+  else if(!isset($_POST['ADSbox'])) {
 	$ADSselect = '';
 	}
   $_SESSION["ADSselect"] = $ADSselect;
@@ -65,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['TSGAbox'])) {
   	$TSGAselect = "TSGA";
   }
-  else {
+  else if(!isset($_POST['TSGAbox'])) {
 	$TSGAselect = '';
 	}
   $_SESSION["TSGAselect"] = $TSGAselect;
@@ -74,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['CTSGAbox'])) {
   	$CTSGAselect = "CTSGA";
   }
-  else {
+  else if(!isset($_POST['CTSGAbox'])) {
 	$CTSGAselect = '';
 	}
   $_SESSION["CTSGAselect"] = $CTSGAselect;
@@ -83,7 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['ICEbox'])) {
   	$ICEselect = "ICE";
   }
-  else {
+  else if(!isset($_POST['ICEbox'])) {
 	$ICEselect = '';
 	}
   $_SESSION["ICEselect"] = $ICEselect;
@@ -92,7 +185,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST['SSLCbox'])) {
   	$SSLCselect = "SSLC";
   }
-  else {
+  else if(!isset($_POST['SSLCbox'])) {
 	$SSLCselect = '';
 	}
   $_SESSION["SSLCselect"] = $SSLCselect;
@@ -103,7 +196,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   else if(isset($_POST['DUHbox']) || isset($_POST['DUCbox']) || isset($_POST['ADSbox']) || isset($_POST['TSGAbox']) || isset($_POST['CTSGAbox']) || isset($_POST['ICEbox']) || isset($_POST['SSLCbox']))
   {
-	$_SESSION["pg4complete"] = "yes";
+	$_SESSION["techtypeerror"] = '';
 	header('Location: costest5.php');
 	exit;
   }
@@ -119,109 +212,153 @@ function test_input($data) {
 
 <script language="JavaScript">
 function hidetabs() {
+	var duh = <?php echo json_encode($_SESSION["DUHselect"]) ?>;
+	var duc = <?php echo json_encode($_SESSION["DUCselect"]) ?>;
+	var ads = <?php echo json_encode($_SESSION["ADSselect"]) ?>;
+	var tsga = <?php echo json_encode($_SESSION["TSGAselect"]) ?>;
+	var ctsga = <?php echo json_encode($_SESSION["CTSGAselect"]) ?>;
+	var ice = <?php echo json_encode($_SESSION["ICEselect"]) ?>;
+	var sslc = <?php echo json_encode($_SESSION["SSLCselect"]) ?>;
 	var geofluidt = "<?php echo $fluidt;?>";
 	if (geofluidt > 100 && geofluidt <=150) {
 		if ("<?php echo $cool_peak_load;?>"!='' && "<?php echo $heat_peak_load;?>"!='') {
 			document.getElementById('DUHtab').hidden=true;
 			document.getElementById('DUHlist').hidden=true;
+			document.getElementById('DUHbox').checked=false;
 			document.getElementById('DUCtab').hidden=true;
 			document.getElementById('DUClist').hidden=true;
+			document.getElementById('DUCbox').checked=false;
 			document.getElementById('TSGAtab').hidden=true;
 			document.getElementById('TSGAlist').hidden=true;
+			document.getElementById('TSGAbox').checked=false;
 			document.getElementById('CTSGAtab').hidden=true;
 			document.getElementById('CTSGAlist').hidden=true;
+			document.getElementById('CTSGAbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 			document.getElementById('SSLCtab').hidden=true;
 			document.getElementById('SSLClist').hidden=true;
+			document.getElementById('SSLCbox').checked=false;
 			document.getElementById('ADSbox').checked=true;
 			document.getElementById('ADSbox').readonly=true;
 		}
-		else if ("<?php echo $heat_peak_load;?>"!='') {
+		else if ("<?php echo $heat_peak_load;?>"!='' && "<?php echo $cool_peak_load;?>"=='') {
 			document.getElementById('DUCtab').hidden=true;
 			document.getElementById('DUClist').hidden=true;
+			document.getElementById('DUCbox').checked=false;
 			document.getElementById('TSGAtab').hidden=true;
 			document.getElementById('TSGAlist').hidden=true;
+			document.getElementById('TSGAbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 			document.getElementById('SSLCtab').hidden=true;
 			document.getElementById('SSLClist').hidden=true;
+			document.getElementById('SSLCbox').checked=false;
 		}
-		else if ("<?php echo $cool_peak_load;?>"!='') {
+		else if ("<?php echo $heat_peak_load;?>"=='' && "<?php echo $cool_peak_load;?>"!='') {
 			document.getElementById('DUHtab').hidden=true;
 			document.getElementById('DUHlist').hidden=true;
+			document.getElementById('DUHbox').checked=false;
 		}
 	}
 	else if (geofluidt > 85 && geofluidt <=100) {
 		if ("<?php echo $cool_peak_load;?>"!='' && "<?php echo $heat_peak_load;?>"!='') {
 			document.getElementById('DUHtab').hidden=true;
 			document.getElementById('DUHlist').hidden=true;
+			document.getElementById('DUHbox').checked=false;
 			document.getElementById('DUCtab').hidden=true;
 			document.getElementById('DUClist').hidden=true;
+			document.getElementById('DUCbox').checked=false;
 			document.getElementById('TSGAtab').hidden=true;
 			document.getElementById('TSGAlist').hidden=true;
+			document.getElementById('TSGAbox').checked=false;
 			document.getElementById('CTSGAtab').hidden=true;
 			document.getElementById('CTSGAlist').hidden=true;
+			document.getElementById('CTSGAbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 			document.getElementById('SSLCtab').hidden=true;
 			document.getElementById('SSLClist').hidden=true;
+			document.getElementById('SSLCbox').checked=false;
 			document.getElementById('ADSbox').checked=true;
 			document.getElementById('ADSbox').readonly=true;
 		}
-		else if ("<?php echo $heat_peak_load;?>"!='') {
+		else if ("<?php echo $heat_peak_load;?>"!='' && "<?php echo $cool_peak_load;?>"=='') {
 			document.getElementById('DUCtab').hidden=true;
 			document.getElementById('DUClist').hidden=true;
+			document.getElementById('DUCbox').checked=false;
 			document.getElementById('TSGAtab').hidden=true;
 			document.getElementById('TSGAlist').hidden=true;
+			document.getElementById('TSGAbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 			document.getElementById('SSLCtab').hidden=true;
 			document.getElementById('SSLClist').hidden=true;
+			document.getElementById('SSLCbox').checked=false;
 		}
-		else if ("<?php echo $cool_peak_load;?>"!='') {
+		else if ("<?php echo $heat_peak_load;?>"=='' && "<?php echo $cool_peak_load;?>"!='') {
 			document.getElementById('DUHtab').hidden=true;
 			document.getElementById('DUHlist').hidden=true;
+			document.getElementById('DUHbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 		}
 	}
-	else if (geofluidt > 60 && geofluidt <=85) {
+	else if (geofluidt >= 60 && geofluidt <=85) {
 		if ("<?php echo $cool_peak_load;?>"!='' && "<?php echo $heat_peak_load;?>"!='') {
 			document.getElementById('DUHtab').hidden=true;
 			document.getElementById('DUHlist').hidden=true;
+			document.getElementById('DUHbox').checked=false;
 			document.getElementById('DUCtab').hidden=true;
 			document.getElementById('DUClist').hidden=true;
+			document.getElementById('DUCbox').checked=false;
 			document.getElementById('TSGAtab').hidden=true;
 			document.getElementById('TSGAlist').hidden=true;
+			document.getElementById('TSGAbox').checked=false;
 			document.getElementById('CTSGAtab').hidden=true;
 			document.getElementById('CTSGAlist').hidden=true;
+			document.getElementById('CTSGAbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 			document.getElementById('SSLCtab').hidden=true;
 			document.getElementById('SSLClist').hidden=true;
+			document.getElementById('SSLCbox').checked=false;
 			document.getElementById('ADSbox').checked=true;
 			document.getElementById('ADSbox').readonly=true;
 		}
-		else if ("<?php echo $heat_peak_load;?>"!='') {
+		else if ("<?php echo $heat_peak_load;?>"!='' && "<?php echo $cool_peak_load;?>"=='') {
 			document.getElementById('DUCtab').hidden=true;
 			document.getElementById('DUClist').hidden=true;
+			document.getElementById('DUCbox').checked=false;
 			document.getElementById('TSGAtab').hidden=true;
 			document.getElementById('TSGAlist').hidden=true;
+			document.getElementById('TSGAbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 			document.getElementById('SSLCtab').hidden=true;
 			document.getElementById('SSLClist').hidden=true;
+			document.getElementById('SSLCbox').checked=false;
 		}
-		else if ("<?php echo $cool_peak_load;?>"!='') {
+		else if ("<?php echo $heat_peak_load;?>"=='' && "<?php echo $cool_peak_load;?>"!='') {
 			document.getElementById('DUHtab').hidden=true;
 			document.getElementById('DUHlist').hidden=true;
+			document.getElementById('DUHbox').checked=false;
 			document.getElementById('DUCtab').hidden=true;
 			document.getElementById('DUClist').hidden=true;
+			document.getElementById('DUCbox').checked=false;
 			document.getElementById('TSGAtab').hidden=true;
 			document.getElementById('TSGAlist').hidden=true;
+			document.getElementById('TSGAbox').checked=false;
 			document.getElementById('ICEtab').hidden=true;
 			document.getElementById('ICElist').hidden=true;
+			document.getElementById('ICEbox').checked=false;
 		}
 	}
 	
@@ -335,10 +472,11 @@ window.onload = start;
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
 <span id="pg6link">Project Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Calculate
+Results
 </div>
 
 <form class="results" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" name="tech">
+<span class="error"><?php echo $techtypeerror;?></span>
 <b>Click tabs for technology descriptions.</b>
 <br />
 <br />
@@ -398,8 +536,8 @@ Calculate
 </div>
 <br />
 <br />
-<input type="button" value="Previous" onclick="location.href='costest3.php'">
-<input type="submit" value="Next"> <span class="error"><?php echo $techselecterror;?></span>
+<input type="button" value="Start Over" onclick="location.href='begin.php'"><input type="button" value="Previous" onclick="location.href='costest3.php'">
+<input type="submit" value="Save and Continue"> <span class="error"><?php echo $techselecterror;?></span>
 </form>
 
 </body>

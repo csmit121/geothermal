@@ -1,0 +1,32 @@
+.results {
+	margin: 3px;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #000;
+	background-color: #FFF;
+	vertical-align: top;
+}
+
+.invisiblebox {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.graphs {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.listbold {
+	font-style: bold;
+	font-weight: bold;
+	font-size: 14px;
+	color: #000;
+}
+
+.resultlist {
+	margin: 0;
+
+}

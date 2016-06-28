@@ -24,7 +24,8 @@ for ($k=0;$k<count($varnames);$k++) {
 	${$varnames[$k]} = '';
 	}
 }	
-	
+
+$_SESSION["pg1complete"] = "yes";	
 //if($_SESSION["fluidt"]!='')	{
 	//$fluidt = $_SESSION["fluidt"];
 //} else {
@@ -84,15 +85,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	} else {
     $fluidt = test_input($_POST["fluidt"]);
     $_SESSION["fluidt"] = $fluidt;
+	$ftunits = test_input($_POST["ftunits"]);
+	$_SESSION["ftunits"] = $ftunits;
 	}
   } else if($_POST["ftunits"]=="fahrenheit") {
 	if (($_POST["fluidt"]) < 140 || ($_POST["fluidt"]) > 302) {
 	$fluidterror = "* ";
 	$fluidterrormsg = "Value must be between 140 and 302 &deg;F.";
+	$ftunits = test_input($_POST["ftunits"]);
+	$_SESSION["ftunits"] = $ftunits;
 	$_SESSION["fluidt"] = '';
 	} else {
-  $fluidt = test_input($_POST["fluidt"]);
+  $fluidt = (test_input($_POST["fluidt"])-32)*(5/9);
   $_SESSION["fluidt"] = $fluidt;
+  $ftunits = "celsius";
+	$_SESSION["ftunits"] = $ftunits;
   }
   }
   
@@ -114,15 +121,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	} else {
 	$wetbulbt = test_input($_POST["wetbulbt"]);
     $_SESSION["wetbulbt"] = $wetbulbt;
+	$wetbulbunits = test_input($_POST["wetbulbunits"]);
+  $_SESSION["wetbulbunits"] = $wetbulbunits;
 	}
   } else if($_POST["wetbulbunits"]=="fahrenheit") {
 	if(($_POST["wetbulbt"]) < 32 || ($_POST["wetbulbt"]) > 122) {
     $wetbulbterror = "* ";
 	$wetbulbterrormsg = "Value must be between 32 and 122 &deg;F.";
 	$_SESSION["wetbulbt"] = '';
+	$wetbulbunits = test_input($_POST["wetbulbunits"]);
+  $_SESSION["wetbulbunits"] = $wetbulbunits;
 	} else {
-	$wetbulbt = test_input($_POST["wetbulbt"]);
+	$wetbulbt = (test_input($_POST["wetbulbt"])-32)*(5/9);
     $_SESSION["wetbulbt"] = $wetbulbt;
+	$wetbulbunits = "celsius";
+	$_SESSION["wetbulbunits"] = $wetbulbunits;
 	}
   }
   
@@ -163,7 +176,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   if ($_SESSION["fluidt"] !='' && $_SESSION["wetbulbt"] !='' && $_SESSION["siteinvest"] !='' && $_SESSION["opcost"] !='') {
 	  header('Location: costest2.php');
-	  $_SESSION["pg1complete"] = "yes";
 	  exit;
   }
 }
@@ -247,7 +259,7 @@ window.onload = sidebarlinks;
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
 <span id="pg6link">Project Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Calculate
+Results
 </div>
 
 <!-- form -->
@@ -285,7 +297,7 @@ Calculate
   <button type="button" onclick="defaults()">Use Default Values</button>
   <br />
   <br />
-  <input type="submit" value="Next">
+  <input type="button" value="Start Over" onclick="location.href='begin.php'"><input type="submit" value="Save and Continue">
 </form>
 
 </body>

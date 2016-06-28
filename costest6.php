@@ -41,6 +41,8 @@ for ($k=0;$k<count($varnames);$k++) {
 	}
 }
 
+$_SESSION["pg6complete"] = "yes";
+
 // define variables and set to empty values
 //$lifetime = $discount = '';
 $lifetimeerror = $discounterror = '';
@@ -48,7 +50,6 @@ $lifetimemsg = $discountmsg = '';
 
 // detect form field errors
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$_SESSION["pg6complete"]='';
   if (empty($_POST["lifetime"])) {
 	  $lifetimeerror = "* ";
 	$lifetimemsg = 'Please enter a value.';
@@ -84,9 +85,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   
   if ($_SESSION["lifetime"] !='' && $_SESSION["discount"] !='') {
-	  $_SESSION["pg6complete"] = "yes";
-	  header('Location: results.php');
+	  if ($_SESSION["DUCselect"] =='' && $_SESSION["DUHselect"] =='' && $_SESSION["ADSselect"] =='' && $_SESSION["TSGAselect"] =='' && $_SESSION["CTSGAselect"] =='' && $_SESSION["ICEselect"] =='' && $_SESSION["SSLCselect"] =='') {
+		  $_SESSION["techtypeerror"] = "Calculation error: please choose at least one technology.<br/>";
+		  header('Location: costest4.php');
+	  } else {
+		  header('Location: results.php');
 	  exit;
+	  }
   }
 }
   
@@ -159,7 +164,7 @@ window.onload = sidebarlinks;
 <img style="position:absolute; left:14px" src="bgbar-btn.png">
 <b>Project Info</b><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Calculate
+Results
 </div>
 
 
@@ -179,7 +184,7 @@ Calculate
 <button type="button" onclick="defaults()">Use Default Values</button>
 <br/>
 <br/>
-<input type="button" value="Previous" onclick="location.href='costest5.php'">
+<input type="button" value="Start Over" onclick="location.href='begin.php'"><input type="button" value="Previous" onclick="location.href='costest5.php'">
 <input type="submit" value="Calculate">
 
 </form>

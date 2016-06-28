@@ -17,6 +17,7 @@ $_SESSION["heat_total_load"]='';
 $_SESSION["cool_peak_load"]='';
 $_SESSION["cool_total_load"]='';
 $_SESSION["natgas_price"]='';
+$_SESSION["ngunits"]='';
 $_SESSION["electricity_price"]='';
 $_SESSION["pg2complete"]='';
 $_SESSION["boiler_efficiency"]='';
@@ -29,11 +30,20 @@ $_SESSION["heat_rej_ec"]='';
 $_SESSION["pump_pwr_ratio"]='';
 $_SESSION["pump_elec_con"]='';
 $_SESSION["pg3complete"]='';
+$_SESSION["DUHselect"]='';
+$_SESSION["DUCselect"]='';
+$_SESSION["ADSselect"]='';
 $_SESSION["TSGAselect"]='';
+$_SESSION["CTSGAselect"]='';
+$_SESSION["ICEselect"]='';
+$_SESSION["SSLCselect"]='';
 $_SESSION["pg4complete"]='';
 $_SESSION["transportation"]='';
 $_SESSION["distance"]='';
+$_SESSION["distunit"]='';
+$_SESSION["weightlimit"]='';
 $_SESSION["netloadwl"]='';
+$_SESSION["wlunit"]='';
 $_SESSION["transportinitcost"]='';
 $_SESSION["transportopcost"]='';
 $_SESSION["fueltype"]='';
@@ -44,6 +54,7 @@ $_SESSION["pg5complete"]='';
 $_SESSION["lifetime"]='';
 $_SESSION["discount"]='';
 $_SESSION["pg6complete"]='';
+$_SESSION["techtypeerror"]='';
 
 ?>
 
@@ -57,8 +68,15 @@ $_SESSION["pg6complete"]='';
 </head>
 
 <body>
+
+<!--// header -->
+<div class="headerbar">
+</div>
+
+<form class="input">
 Welcome to the ORNL Geothermal Cost Estimator. Please click "next" to begin.
-<form>
+<br/>
+<br/>
 <input type="button" value="Next" onclick="location.href='costest1.php'"></input>
 </form>
 </body>

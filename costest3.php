@@ -22,6 +22,7 @@ for ($k=0;$k<count($varnames);$k++) {
 	}
 }
 
+$_SESSION["pg3complete"] = "yes";
 // define variables and set to empty values
 //$boiler_efficiency = $elechiller_efficiency = $design_cop = $avg_cop = $chlr_elec_con = $heat_rej_pr = $heat_rej_ec = $pump_pwr_ratio = $pump_elec_con = '';
 //$_SESSION["boiler_efficiency"] = $_SESSION["elechiller_efficiency"] = $_SESSION["design_cop"] = $_SESSION["avg_cop"] = $_SESSION["chlr_elec_con"] = $_SESSION["heat_rej_pr"] = $_SESSION["heat_rej_ec"] = $_SESSION["pump_pwr_ratio"] = $_SESSION["pump_elec_con"] = '';
@@ -33,7 +34,6 @@ $grp1msg = $grp2msg = $grp3msg = '';
 
 // detect form field errors
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-$_SESSION["pg3complete"]='';
 if ($heat_peak_load !='') {
   if (empty($_POST["boiler_efficiency"])) {
 	$boiler_efficiencyerror = "* ";
@@ -226,7 +226,6 @@ if ($cool_peak_load !='') {
 
 if ($_SESSION["heat_peak_load"] !='' && $_SESSION["cool_peak_load"] =='') { 
   if ($_SESSION["boiler_efficiency"] !='') {
-	  $_SESSION["pg3complete"] = "yes";
 	  header('Location: costest4.php');
 	  exit;
   }
@@ -234,7 +233,6 @@ if ($_SESSION["heat_peak_load"] !='' && $_SESSION["cool_peak_load"] =='') {
 
 if ($_SESSION["heat_peak_load"] =='' && $_SESSION["cool_peak_load"] !='') { 
   if ($_SESSION["elechiller_efficiency"] !='' && $_SESSION["design_cop"] !='' && ($_SESSION["avg_cop"] !='' || $_SESSION["chlr_elec_con"] !='') && ($_SESSION["heat_rej_pr"] !='' || $_SESSION["heat_rej_ec"] !='') && ($_SESSION["pump_pwr_ratio"] !='' || $_SESSION["pump_elec_con"] !='')) {
-	  $_SESSION["pg3complete"] = "yes";
 	  header('Location: costest4.php');
 	  exit;
   }
@@ -242,7 +240,6 @@ if ($_SESSION["heat_peak_load"] =='' && $_SESSION["cool_peak_load"] !='') {
 
 if ($_SESSION["heat_peak_load"] !='' && $_SESSION["cool_peak_load"] !='') { 
   if ($_SESSION["boiler_efficiency"] !='' && $_SESSION["elechiller_efficiency"] !='' && $_SESSION["design_cop"] !='' && ($_SESSION["avg_cop"] !='' || $_SESSION["chlr_elec_con"] !='') && ($_SESSION["heat_rej_pr"] !='' || $_SESSION["heat_rej_ec"] !='') && ($_SESSION["pump_pwr_ratio"] !='' || $_SESSION["pump_elec_con"] !='')) {
-	  $_SESSION["pg3complete"] = "yes";
 	  header('Location: costest4.php');
 	  exit;
   }
@@ -447,7 +444,7 @@ window.onload = start;
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
 <span id="pg6link">Project Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Calculate
+Results
 </div>
 
 
@@ -513,8 +510,8 @@ Calculate
 <button type="button" onclick="defaults()">Use Default Values</button>
   <br />
   <br />
-<input type="button" value="Previous" onclick="location.href='costest2.php'">
-<input type="submit" value="Next">
+<input type="button" value="Start Over" onclick="location.href='begin.php'"><input type="button" value="Previous" onclick="location.href='costest2.php'">
+<input type="submit" value="Save and Continue">
 
 </form>
 </body>

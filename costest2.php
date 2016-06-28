@@ -5,7 +5,7 @@ $fluidt = $_SESSION["fluidt"];
 $siteinvest = $_SESSION["siteinvest"];
 $opcost = $_SESSION["opcost"];
 
-$varnames = array("building_location","building_state","selected_bldg_loc","heat_peak_load","heat_total_load","cool_peak_load","cool_total_load","natgas_price","electricity_price","pg2complete");
+$varnames = array("building_location","building_state","selected_bldg_loc","heat_peak_load","heat_total_load","cool_peak_load","cool_total_load","natgas_price","ngunits","electricity_price","pg2complete");
 
 for ($k=0;$k<count($varnames);$k++) {
 	if ($_SESSION[$varnames[$k]]!='') {
@@ -14,6 +14,8 @@ for ($k=0;$k<count($varnames);$k++) {
 	${$varnames[$k]} = '';
 	}
 }	
+
+$_SESSION["pg2complete"] = "yes";
 
 // define variables and set to empty values
 $building_locationerror = $heat_peak_loaderror = $heat_total_loaderror = $cool_peak_loaderror = $cool_total_loaderror = $natgas_priceerror = $electricity_priceerror = '';
@@ -24,8 +26,6 @@ $cboxerror = $heatapperror = $coolapperror = '';
 
 // detect form field errors
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	
-	$_SESSION["pg2complete"]='';
 	$building_state = test_input($_POST["building_state"]);
 	$_SESSION["building_state"] = $building_state;
   if ($_POST["building_location"]=='' && $_SESSION["building_location"]=='') {
@@ -45,6 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $_SESSION["selected_bldg_loc"] = $selected_bldg_loc;
   }
   
+  $ngunits = test_input($_POST["ngunits"]);
+  $_SESSION["ngunits"] = $ngunits;
   if ($_POST["natgas_price"]=='') {
 	$natgas_priceerror = "* ";
 	$natgas_pricemsg = "Please input a value.";
@@ -162,7 +164,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if ($_SESSION["heat_peak_load"] != '' && $_SESSION["heat_total_load"] != '' && $_SESSION["building_location"] != '' && $_SESSION["natgas_price"] != '' && $_SESSION["electricity_price"] != '') {
     $_SESSION["cool_peak_load"] = '';	
 	$_SESSION["cool_total_load"] = '';
-	$_SESSION["pg2complete"] = "yes";
 	  header('Location: costest3.php');
 	  exit;
 	}
@@ -171,14 +172,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if ($_SESSION["cool_peak_load"] != '' && $_SESSION["cool_total_load"] != '' && $_SESSION["building_location"] != '' && $_SESSION["natgas_price"] != '' && $_SESSION["electricity_price"] != '') {
     $_SESSION["heat_peak_load"] = '';	
 	$_SESSION["heat_total_load"] = '';
-	$_SESSION["pg2complete"] = "yes";
 	  header('Location: costest3.php');
 	  exit;
 	}
   }
   else if (isset($_POST['heatapp']) && isset($_POST['coolapp'])) {
 	if ($_SESSION["heat_peak_load"] != '' && $_SESSION["heat_total_load"] != '' && $_SESSION["cool_peak_load"] != '' && $_SESSION["cool_total_load"] != '' && $_SESSION["building_location"] != '' && $_SESSION["natgas_price"] != '' && $_SESSION["electricity_price"] != '') {
-	  $_SESSION["pg2complete"] = "yes";
 	  header('Location: costest3.php');
 	  exit;
 	}
@@ -331,6 +330,7 @@ function defaults() {
 		document.getElementById("city"+31).selected = true;
 		var showcity = document.getElementById("city"+31).value;
 		document.getElementById('natgas_price').value = 0.4;
+		document.getElementById('ngunits').value = "MMBtu";
 		document.getElementById('electricity_price').value = 0.102;
 		//if(document.economic.heatapp.checked && document.economic.coolapp.checked) {
 		//document.getElementById('heat_peak_load').value = 1000;
@@ -417,7 +417,7 @@ window.onload = start;
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
 <span id="pg6link">Project Info</span><br /><br />
 <img style="position:absolute; left:14px" src="bgbar-btn-off.png">
-Calculate
+Results
 </div>
 
 <!-- form -->
@@ -540,12 +540,11 @@ Calculate
 </div>
 <br>
 <span class="error"><?php echo $natgas_priceerror;?></span>Natural gas price: $
-<input type="text" name="natgas_price" id="natgas_price" size="10" value="<?php echo $_SESSION["natgas_price"];?>">/MMBtu
-<!--<select name="unit">
-	<option value="kWh">kWh</option>
-	<option value="MMBtu">MMBtu</option>
-	<option value="hph">hph</option>
-</select>-->
+<input type="text" name="natgas_price" id="natgas_price" size="10" value="<?php echo $_SESSION["natgas_price"];?>">/
+<select name="ngunits" id="ngunits">
+	<option value="MMBtu" <?php if($ngunits=="MMBtu") echo "selected='selected'";?>>MMBtu</option>
+	<option value="thm" <?php if($ngunits=="thm") echo "selected='selected'";?>>Therm</option>
+</select>
 <br><span class="error"><?php echo $natgas_pricemsg;?></span>
 <br>
 <span class="error"><?php echo $electricity_priceerror;?></span>Electricity price: $
@@ -560,8 +559,8 @@ Calculate
   <button type="button" onclick="defaults()">Use Default Values</button>
   <br />
   <br />
-<input type="button" value="Previous" onclick="location.href='costest1.php'">
-<input type="submit" value="Next"> <span class="error"><?php echo $cboxerror;?></span>
+<input type="button" value="Start Over" onclick="location.href='begin.php'"><input type="button" value="Previous" onclick="location.href='costest1.php'">
+<input type="submit" value="Save and Continue"> <span class="error"><?php echo $cboxerror;?></span>
 
 </form>
 </body>
